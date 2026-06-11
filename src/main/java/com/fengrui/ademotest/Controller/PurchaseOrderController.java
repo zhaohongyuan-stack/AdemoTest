@@ -3,8 +3,10 @@ package com.fengrui.ademotest.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fengrui.ademotest.common.Result;
+import com.fengrui.ademotest.dto.PurchaseOrderCreateDTO;
 import com.fengrui.ademotest.entity.PurchaseOrder;
 import com.fengrui.ademotest.service.PurchaseOrderService;
+import com.fengrui.ademotest.vo.PurchaseOrderVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,16 +33,29 @@ public class PurchaseOrderController {
         return Result.success(purchaseOrderService.page(page, wrapper));
     }
 
-    @Operation(summary = "根据ID查询采购订单详情")
+    @Operation(summary = "根据ID查询采购订单详情（含明细）")
     @GetMapping("/{id}")
-    public Result<PurchaseOrder> getById(@PathVariable Integer id) {
-        return Result.success(purchaseOrderService.getById(id));
+    public Result<PurchaseOrderVO> getById(@PathVariable Integer id) {
+        return Result.success(purchaseOrderService.getPurchaseOrderDetail(id));
     }
 
-    @Operation(summary = "新增采购订单")
+    @Operation(summary = "创建采购单（含明细）")
     @PostMapping
-    public Result<Void> add(@RequestBody PurchaseOrder order) {
-        purchaseOrderService.save(order);
+    public Result<PurchaseOrderVO> create(@RequestBody PurchaseOrderCreateDTO dto) {
+        return Result.success(purchaseOrderService.createPurchaseOrder(dto));
+    }
+
+    @Operation(summary = "采购单入库")
+    @PutMapping("/{id}/receive")
+    public Result<Void> receive(@PathVariable Integer id) {
+        purchaseOrderService.receivePurchaseOrder(id);
+        return Result.success();
+    }
+
+    @Operation(summary = "取消采购单")
+    @PutMapping("/{id}/cancel")
+    public Result<Void> cancel(@PathVariable Integer id) {
+        purchaseOrderService.cancelPurchaseOrder(id);
         return Result.success();
     }
 

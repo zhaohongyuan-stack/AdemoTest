@@ -3,8 +3,10 @@ package com.fengrui.ademotest.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fengrui.ademotest.common.Result;
+import com.fengrui.ademotest.dto.SaleOrderCreateDTO;
 import com.fengrui.ademotest.entity.SaleOrder;
 import com.fengrui.ademotest.service.SaleOrderService;
+import com.fengrui.ademotest.vo.SaleOrderVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,16 +33,29 @@ public class SaleOrderController {
         return Result.success(saleOrderService.page(page, wrapper));
     }
 
-    @Operation(summary = "根据ID查询销售订单详情")
+    @Operation(summary = "根据ID查询销售订单详情（含明细）")
     @GetMapping("/{id}")
-    public Result<SaleOrder> getById(@PathVariable Integer id) {
-        return Result.success(saleOrderService.getById(id));
+    public Result<SaleOrderVO> getById(@PathVariable Integer id) {
+        return Result.success(saleOrderService.getSaleOrderDetail(id));
     }
 
-    @Operation(summary = "新增销售订单")
+    @Operation(summary = "创建销售单（含明细）")
     @PostMapping
-    public Result<Void> add(@RequestBody SaleOrder order) {
-        saleOrderService.save(order);
+    public Result<SaleOrderVO> create(@RequestBody SaleOrderCreateDTO dto) {
+        return Result.success(saleOrderService.createSaleOrder(dto));
+    }
+
+    @Operation(summary = "销售单出库")
+    @PutMapping("/{id}/ship")
+    public Result<Void> ship(@PathVariable Integer id) {
+        saleOrderService.shipSaleOrder(id);
+        return Result.success();
+    }
+
+    @Operation(summary = "取消销售单")
+    @PutMapping("/{id}/cancel")
+    public Result<Void> cancel(@PathVariable Integer id) {
+        saleOrderService.cancelSaleOrder(id);
         return Result.success();
     }
 
