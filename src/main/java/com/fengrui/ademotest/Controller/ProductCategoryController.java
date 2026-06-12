@@ -5,10 +5,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fengrui.ademotest.common.Result;
 import com.fengrui.ademotest.entity.ProductCategory;
 import com.fengrui.ademotest.service.ProductCategoryService;
+import com.fengrui.ademotest.vo.ProductCategoryTreeVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "商品分类管理", description = "商品分类相关接口")
 @RestController
@@ -17,6 +20,12 @@ public class ProductCategoryController {
 
     @Autowired
     private ProductCategoryService productCategoryService;
+
+    @Operation(summary = "获取分类树形结构")
+    @GetMapping("/tree")
+    public Result<List<ProductCategoryTreeVO>> getTree() {
+        return Result.success(productCategoryService.getCategoryTree());
+    }
 
     @Operation(summary = "分页查询分类列表")
     @GetMapping("/page")
